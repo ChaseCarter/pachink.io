@@ -1,7 +1,8 @@
 from .completion_client import CompletionClient
+from .embedding_client import EmbeddingClient
 import openai
 
-class OpenAICompletions(CompletionClient):
+class OpenAIClient(CompletionClient, EmbeddingClient):
 
     organization: str
     api_key: str
@@ -17,10 +18,10 @@ class OpenAICompletions(CompletionClient):
 
     def get_completions(self, prompt: str, n: int = 1, temp: float = 0.5) -> list[str]:
         res = openai.Completion.create(
-            engine='text-babbage-001',
+            engine=self.engine,
             prompt=prompt,
             temperature=temp,
-            max_tokens=124,
+            max_tokens=40,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -28,3 +29,7 @@ class OpenAICompletions(CompletionClient):
             n=n
         )
         return (choice['text'].strip() for choice in res['choices'])
+    
+    def get_embeddings(self, texts: list[str]):
+        res = openai.Embedding.create(input=texts, model='text-embedding-ada-002')
+        return ((item['embedding'], item['index']) for item in res["data"])

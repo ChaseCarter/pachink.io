@@ -1,12 +1,11 @@
 from openai.embeddings_utils import cosine_similarity
-import numpy
 
 from .completion_client import CompletionClient
 from .embedding_client import EmbeddingClient
 
 class Director:
 
-    DEFAULT_TEMP = 1.2
+    DEFAULT_TEMP = 1.3
     completion_client: CompletionClient
     embedding_client: EmbeddingClient
     
@@ -14,16 +13,38 @@ class Director:
         self.completion_client = completion_client
         self.embedding_client = embedding_client
 
-    def chain_of_intuition(self, query: str, fanout: int = 1):
-        base_prompt = "Steve Jobs: Yes, I always trust my intuition. Sometimes one intuition will naturally lead to another, and I can use this to solve complex problems. For example: \
-        1. I felt that people didn't want bulky phones, in spite of surveys showing that people wanted more functionality even at the expense of phone weight and size. \
-        2. I intuited that aesthetics and form factor might be more important than adding more functional features \
-        3. I could sense that the direction things were going in was towards elegant touchscreens and away from tactile buttons \
-        Another example is the way I followed my intuitions to discover {0}:"
-        prompt = base_prompt.format(query)
+    def chain_of_intuition(self, query: str, fanout: int = 1, promptOverride = False):
+        
+        if promptOverride:
+            prompt = query
+        else:
+            base_prompt = "Steve Jobs: Yes, I always trust my intuition. Sometimes one intuition will naturally lead to another, and I can use this to solve complex problems. For example: \n\
+>>> I felt that people didn't want bulky phones, in spite of surveys showing that people wanted more functionality even at the expense of phone weight and size. \n\
+>>> I intuited that aesthetics and form factor might be more important than adding more functional features \n\
+>>> I could sense that the direction things were going in was towards elegant touchscreens and away from tactile buttons \n\
+Another example is the way I followed my intuitions to discover {0}: \n\
+>>> "
+            prompt = base_prompt.format(query)
         print("Prompt:", prompt)
-        results = self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP)
-        print(list(results))
+
+        while True:
+            completions = list(self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=">>>"))
+            for i, completion in enumerate(completions):
+                print(f"({i}): {completion}")
+            selected_index = input()
+            if selected_index.isdigit():
+                chosen_completion = completions[int(selected_index)]
+            elif selected_index == "exit":
+                print("Exiting chain of intuition")
+                break
+            elif selected_index == "":
+                # TODO: don't modify prompt 
+                pass
+            else:
+                chosen_completion = selected_index
+
+            prompt = prompt + chosen_completion + "\n>>> "
+            print("Next Prompt:", prompt)
 
     def compare_statements(self, statement1: str, statement2: str) -> float:
         base_embeddings = list(self.embedding_client.get_embeddings([statement1, statement2]))

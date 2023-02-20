@@ -16,7 +16,7 @@ class OpenAIClient(CompletionClient, EmbeddingClient):
         openai.organization = organization
         openai.api_key = api_key
 
-    def get_completions(self, prompt: str, n: int = 1, temp: float = 0.5) -> list[str]:
+    def get_completions(self, prompt: str, n: int = 1, temp: float = 0.5, stop: str = None) -> list[str]:
         res = openai.Completion.create(
             engine=self.engine,
             prompt=prompt,
@@ -25,7 +25,7 @@ class OpenAIClient(CompletionClient, EmbeddingClient):
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=None,
+            stop=stop,
             n=n
         )
         return (choice['text'].strip() for choice in res['choices'])

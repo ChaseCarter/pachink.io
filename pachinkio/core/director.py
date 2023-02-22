@@ -18,17 +18,16 @@ class Director:
         if promptOverride:
             prompt = query
         else:
-            base_prompt = "Steve Jobs: Yes, I always trust my intuition. Sometimes one intuition will naturally lead to another, and I can use this to solve complex problems. For example: \n\
->>> I felt that people didn't want bulky phones, in spite of surveys showing that people wanted more functionality even at the expense of phone weight and size. \n\
->>> I intuited that aesthetics and form factor might be more important than adding more functional features \n\
->>> I could sense that the direction things were going in was towards elegant touchscreens and away from tactile buttons \n\
-Another example is the way I followed my intuitions to discover {0}: \n\
->>> "
+            base_prompt = "Bob Dylan's hit song “Yellow Rush” has baffled fans and critics alike. Its cryptic tone and lack of any obvious message or topic bothers some, but its use of vivid imagery makes it an instant classic. The lyrics are beautiful: \n\
+I saw you standing on the corner, \n\
+With a yellow rose in your hand, \n\
+You looked like you were waiting, \n\
+But I didn't understand,"
             prompt = base_prompt.format(query)
         print("Prompt:", prompt)
 
         while True:
-            completions = list(self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=">>>"))
+            completions = list(self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=","))
             for i, completion in enumerate(completions):
                 print(f"({i}): {completion}")
             selected_index = input()
@@ -43,7 +42,7 @@ Another example is the way I followed my intuitions to discover {0}: \n\
             else:
                 chosen_completion = selected_index
 
-            prompt = prompt + chosen_completion + "\n>>> "
+            prompt = prompt + chosen_completion + ", \n"
             print("Next Prompt:", prompt)
 
     def compare_statements(self, statement1: str, statement2: str) -> float:
@@ -88,15 +87,15 @@ Another example is the way I followed my intuitions to discover {0}: \n\
             print("Completions:", completions)
             print("Best: ", best_similarity, next_statement)
 
-    def run_telephone_game(self, iterations: int):
+    def run_telephone_game(self, statement: str, iterations: int = 5, temperature: float = DEFAULT_TEMP):
 
         base_prompt = "Re-word this sentence in a slightly different way, without changing the meaning: '{0}'"
-        prev_result = 'My milkshake brings all the boys to the yard.'
+        prev_result = statement
+        step_results = [prev_result]
         for i in range(iterations):
-            results = self.run_next_cycle(base_prompt.format(prev_result))
+            results = self.completion_client.get_completions(base_prompt.format(prev_result), n=1, temp=temperature)
             prev_result = next(results)
+            step_results.append(prev_result)
             print(f"Step {i}, Prompt: {prev_result}")
-
-    def run_next_cycle(self, prompt: str):
-        results = self.completion_client.get_completions(prompt, n=1, temp=Director.DEFAULT_TEMP)
-        return results
+        
+        return step_results

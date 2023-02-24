@@ -87,7 +87,7 @@ But I didn't understand,"
             print("Completions:", completions)
             print("Best: ", best_similarity, next_statement)
 
-    def run_telephone_game(self, statement: str, iterations: int = 5, temperature: float = DEFAULT_TEMP):
+    def run_telephone_game(self, statement: str, iterations: int = 2, temperature: float = DEFAULT_TEMP):
 
         base_prompt = "Re-word this sentence in a slightly different way, without changing the meaning: '{0}'"
         prev_result = statement

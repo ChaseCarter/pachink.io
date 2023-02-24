@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == '__main__':
     from pachinkio.core.director import Director
@@ -30,7 +33,7 @@ def telephone():
     kwargs = dict(statement = content['statement'], iterations = iterations, temperature = temperature)
 
     results = director.run_telephone_game(**{k: v for k, v in kwargs.items() if v is not None})
-    return jsonify({'steps': results, 'end-statement': results[-1]})
+    return jsonify({'steps': results, 'endStatement': results[-1]})
 
 if __name__ == '__main__':
     app.run(debug = True)

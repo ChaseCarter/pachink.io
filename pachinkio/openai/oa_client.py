@@ -1,5 +1,5 @@
-from .completion_client import CompletionClient
-from .embedding_client import EmbeddingClient
+from pachinkio.core.completion_client import CompletionClient
+from pachinkio.core.embedding_client import EmbeddingClient
 import openai
 
 class OpenAIClient(CompletionClient, EmbeddingClient):
@@ -15,6 +15,7 @@ class OpenAIClient(CompletionClient, EmbeddingClient):
 
         openai.organization = organization
         openai.api_key = api_key
+        print(f"Initializing OpenAIClient with engine [{self.engine}]")
 
     def get_completions(self, prompt: str, n: int = 1, temp: float = 0.5, stop: str = None) -> list[str]:
         res = openai.Completion.create(

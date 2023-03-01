@@ -1,3 +1,4 @@
+from injector import inject
 from openai.embeddings_utils import cosine_similarity
 
 from .completion_client import CompletionClient
@@ -9,20 +10,23 @@ class Director:
     completion_client: CompletionClient
     embedding_client: EmbeddingClient
     
+    @inject
     def __init__(self, completion_client: CompletionClient, embedding_client: EmbeddingClient):
         self.completion_client = completion_client
         self.embedding_client = embedding_client
+
+        print("Initializing Director")
 
     def chain_of_intuition(self, query: str, fanout: int = 1, promptOverride = False):
         
         if promptOverride:
             prompt = query
         else:
-            base_prompt = "Bob Dylan's hit song “Yellow Rush” has baffled fans and critics alike. Its cryptic tone and lack of any obvious message or topic bothers some, but its use of vivid imagery makes it an instant classic. The lyrics are beautiful: \n\
-I saw you standing on the corner, \n\
-With a yellow rose in your hand, \n\
-You looked like you were waiting, \n\
-But I didn't understand,"
+            base_prompt = "Steve Jobs: Yes, I always trust my intuition. Sometimes one intuition will naturally lead to another, and I can use this to solve complex problems. For example: \
+1. I felt that people didn't want bulky phones, in spite of surveys showing that people wanted more functionality even at the expense of phone weight and size. \
+2. I intuited that aesthetics and form factor might be more important than adding more functional features \
+3. I could sense that the direction things were going in was towards elegant touchscreens and away from tactile buttons \
+Another example is the way I followed my intuitions to discover {0}:"
             prompt = base_prompt.format(query)
         print("Prompt:", prompt)
 
@@ -51,6 +55,7 @@ But I didn't understand,"
         embedding2 = base_embeddings[1][0]
         similarity = cosine_similarity(embedding1, embedding2)
         print(statement1, statement2, similarity)
+        return similarity
 
     def interpolate_concepts(self, start_statement: str, target_statement: str, fanout: int,  iterations: int):
         base_embeddings = list(self.embedding_client.get_embeddings([start_statement, target_statement]))

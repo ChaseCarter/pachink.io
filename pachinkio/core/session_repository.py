@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# TODO: complete inferface
 class SessionRepository(ABC):
 
     @abstractmethod

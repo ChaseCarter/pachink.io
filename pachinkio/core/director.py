@@ -11,13 +11,12 @@ class Director:
     embedding_client: EmbeddingClient
     
     @inject
-    def __init__(self, completion_client: CompletionClient, embedding_client: EmbeddingClient):
+    def __init__(self, completion_client: CompletionClient, embedding_client: EmbeddingClient) -> None:
         self.completion_client = completion_client
         self.embedding_client = embedding_client
-
         print("Initializing Director")
 
-    def chain_of_intuition(self, query: str, fanout: int = 1, promptOverride = False):
+    def chain_of_intuition(self, query: str, fanout: int = 1, promptOverride = False) -> None:
         
         if promptOverride:
             prompt = query
@@ -57,7 +56,7 @@ Another example is the way I followed my intuitions to discover {0}:"
         print(statement1, statement2, similarity)
         return similarity
 
-    def interpolate_concepts(self, start_statement: str, target_statement: str, fanout: int,  iterations: int):
+    def interpolate_concepts(self, start_statement: str, target_statement: str, fanout: int,  iterations: int) -> None:
         base_embeddings = list(self.embedding_client.get_embeddings([start_statement, target_statement]))
         start_embedding = base_embeddings[0][0] 
         target_embedding = base_embeddings[1][0]
@@ -92,7 +91,7 @@ Another example is the way I followed my intuitions to discover {0}:"
             print("Completions:", completions)
             print("Best: ", best_similarity, next_statement)
 
-    def run_telephone_game(self, statement: str, iterations: int = 2, temperature: float = DEFAULT_TEMP):
+    def run_telephone_game(self, statement: str, iterations: int = 2, temperature: float = DEFAULT_TEMP) -> list[str]:
 
         base_prompt = "Re-word this sentence in a slightly different way, without changing the meaning: '{0}'"
         prev_result = statement

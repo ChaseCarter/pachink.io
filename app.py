@@ -14,8 +14,15 @@ def telephone() -> Response:
     kwargs = dict(statement = content['statement'], iterations = iterations, temperature = temperature)
 
     results = director.run_telephone_game(**{k: v for k, v in kwargs.items() if v is not None})
-    print(type(jsonify({'steps': results, 'endStatement': results[-1]})))
     return jsonify({'steps': results, 'endStatement': results[-1]})
+
+@app.route('/compare-statements', methods = ['POST'])
+def compare_statements() -> Response:
+    content = request.json
+    statement_1 = content['statement1']
+    statement_2 = content['statement2']
+    similarity = director.compare_statements(statement_1, statement_2)
+    return jsonify({'similarity': similarity})
 
 if __name__ == '__main__':
     from injector import Injector

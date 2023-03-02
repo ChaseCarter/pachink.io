@@ -38,11 +38,12 @@ if __name__ == '__main__':
 
     from pachinkio.core.director import Director
     from pachinkio.openai.oa_module import OpenAiApiModule
+    from pachinkio.prompts.prompts_v1_module import PromptsV1Module
     
 
     print("Initializing Flask application")
     
-    injector = Injector([OpenAiApiModule])
+    injector = Injector([OpenAiApiModule, PromptsV1Module])
     director = injector.get(Director)
 
     app.run(debug = True)

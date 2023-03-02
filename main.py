@@ -1,6 +1,6 @@
 if __name__ == '__main__':
-    import configparser
     from injector import Injector
+    
     from pachinkio.core.director import Director
     from pachinkio.openai.oa_module import OpenAiApiModule
 

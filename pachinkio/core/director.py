@@ -56,7 +56,8 @@ Another example is the way I followed my intuitions to discover {0}:"
         print(statement1, statement2, similarity)
         return similarity
 
-    def interpolate_concepts(self, start_statement: str, target_statement: str, fanout: int,  iterations: int) -> None:
+    # Returns (list[(step_result, similarity-to-original)], temination-reason)
+    def interpolate_concepts(self, start_statement: str, target_statement: str, fanout: int,  iterations: int) -> tuple[list[tuple[str, float]], str]:
         base_embeddings = list(self.embedding_client.get_embeddings([start_statement, target_statement]))
         start_embedding = base_embeddings[0][0] 
         target_embedding = base_embeddings[1][0]
@@ -66,6 +67,8 @@ Another example is the way I followed my intuitions to discover {0}:"
         best_similarity = cosine_similarity(start_embedding, target_embedding)
         iterations_without_progress = 0
         temp = Director.DEFAULT_TEMP
+        results = [(start_statement, best_similarity)]
+        termination_reason = "finished"
 
         for i in range(iterations):
             print("Temp:", temp)
@@ -80,16 +83,20 @@ Another example is the way I followed my intuitions to discover {0}:"
                 next_statement = completions[best_completion_index]
                 iterations_without_progress = 0
                 temp = max(Director.DEFAULT_TEMP, temp * 0.9)
+                results.append((completions[best_completion_index], best_similarity))
             else:
                 iterations_without_progress += 1
                 temp = min(temp * 1.1, 2.0)
                 if iterations_without_progress > 5:
+                    termination_reason = "slow progress"
                     print("*** Ending run early, too many iterations without progress toward target ***")
                     print(f"*** iterations: {i}")
                     break
 
             print("Completions:", completions)
             print("Best: ", best_similarity, next_statement)
+        
+        return (results, termination_reason)
 
     def run_telephone_game(self, statement: str, iterations: int = 2, temperature: float = DEFAULT_TEMP) -> list[str]:
 

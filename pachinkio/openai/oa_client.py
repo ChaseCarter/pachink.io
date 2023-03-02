@@ -1,7 +1,8 @@
-from pachinkio.core.completion_client import CompletionClient
-from pachinkio.core.embedding_client import EmbeddingClient
 import openai
 from typing import Generator
+
+from pachinkio.core.completion_client import CompletionClient
+from pachinkio.core.embedding_client import EmbeddingClient
 
 class OpenAIClient(CompletionClient, EmbeddingClient):
 

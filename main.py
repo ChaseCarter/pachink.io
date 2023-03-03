@@ -5,7 +5,7 @@ if __name__ == '__main__':
     from pachinkio.openai.oa_module import OpenAiApiModule
     from pachinkio.prompts.prompts_module import PromptsModule
 
-    injector = Injector([OpenAiApiModule, PromptsModule('./pachinkio/prompts/prompts_v1.ini')])
+    injector = Injector([OpenAiApiModule('.env'), PromptsModule('./pachinkio/prompts/prompts_v1.ini')])
     director = injector.get(Director)
 
     #start = "I love to drink milkshakes becuase they are creamy and sugary."

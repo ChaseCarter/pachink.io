@@ -1,17 +1,16 @@
+from injector import Injector
 import pytest
-from flask import Flask, jsonify, request
-from flask.wrappers import Response
-from flask_cors import CORS, cross_origin
+
+from pachinkio import create_app
+from pachinkio.openai.oa_module import OpenAiApiModule
+from pachinkio.prompts.prompts_module import PromptsModule
 
 @pytest.fixture()
 def app():
-    app = create_app()
-    app = Flask(__name__)
-    cors = CORS(app)
-    app.config['CORS_HEADERS'] = 'Content-Type'
-    app.config.update({
-        "TESTING": True,
-    })
+    
+    injector = Injector([OpenAiApiModule('test.env'), PromptsModule('./pachinkio/prompts/prompts_v1.ini')])
+    app = create_app(injector)
+    app.config.update({"TESTING": True})
 
     yield app
 

@@ -1,3 +1,7 @@
+"""
+For manual testing & utilizing Director from the command line without wrapping it in a Flask application.
+"""
+
 if __name__ == '__main__':
     from injector import Injector
     

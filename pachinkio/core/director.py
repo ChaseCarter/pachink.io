@@ -18,16 +18,16 @@ class Director:
         self.prompts = prompts
         print("Initializing Director")
 
-    def chain_of_intuition(self, query: str, fanout: int = 1, promptOverride = False) -> None:
+    def chain_of_intuition(self, query: str, fanout: int = 1, prompt_override = False) -> None:
         
-        if promptOverride:
+        if prompt_override:
             prompt = query
         else:
             prompt = self.prompts.COI_base_prompt.format(query)
         print("Prompt:", prompt)
 
         while True:
-            completions = list(self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=","))
+            completions = list(self.completion_client.get_completions(prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=">>> "))
             for i, completion in enumerate(completions):
                 print(f"({i}): {completion}")
             selected_index = input()
@@ -42,7 +42,7 @@ class Director:
             else:
                 chosen_completion = selected_index
 
-            prompt = prompt + chosen_completion + ", \n"
+            prompt = prompt + chosen_completion + ", \n>>> "
             print("Next Prompt:", prompt)
 
     def compare_statements(self, statement1: str, statement2: str) -> float:

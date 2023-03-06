@@ -19,46 +19,6 @@ class Director:
         self.prompts = prompts
         print("Initializing Director")
 
-    def chain_of_intuition(self, query: str, fanout: int = 2, prompt_override = False) -> None:
-        """(Currently only implemented for use in console). Similar to Chain of Thought prompting, performs
-        Chain of Intuition prompting attempting to answer the query in discrete steps. At each step,
-        multiple completions are presented to choose from, then the user picks one or writes their own. User
-        can exit by inputting "exit".
-
-        Parameters:
-            query: query to answer.
-            fanout: how many completions to generate at each step.
-            prompt_override: If True, query is assumed to include an entire COI pre-prompt rather than just
-                a simple question, and the default pre-prompt is not used. Can use this with different pre-prompts
-                to do non-COI tasks.
-        """
-
-        if prompt_override:
-            prompt = query
-        else:
-            prompt = self.prompts.COI_base_prompt.format(query)
-        print("Prompt:", prompt)
-
-        while True:
-            completions = list(self.completion_client.get_completions(
-                prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=">>> "))
-            for i, completion in enumerate(completions):
-                print(f"({i}): {completion}")
-            selected_index = input()
-            if selected_index.isdigit():
-                chosen_completion = completions[int(selected_index)]
-            elif selected_index == "exit":
-                print("Exiting chain of intuition")
-                break
-            elif selected_index == "":
-                # TODO: don't modify prompt 
-                pass
-            else:
-                chosen_completion = selected_index
-
-            prompt = prompt + chosen_completion + ", \n>>> "
-            print("Next Prompt:", prompt)
-
     def compare_statements(self, statement1: str, statement2: str) -> float:
         """Return the cosine similarity of the embeddings for the input statements."""
 
@@ -149,3 +109,43 @@ class Director:
             print(f"Step {i}, Prompt: {prev_result}")
         
         return step_results
+
+    def chain_of_intuition(self, query: str, fanout: int = 2, prompt_override = False) -> None:
+        """(Currently only implemented for use in console). Similar to Chain of Thought prompting, performs
+        Chain of Intuition prompting attempting to answer the query in discrete steps. At each step,
+        multiple completions are presented to choose from, then the user picks one or writes their own. User
+        can exit by inputting "exit".
+
+        Parameters:
+            query: query to answer.
+            fanout: how many completions to generate at each step.
+            prompt_override: If True, query is assumed to include an entire COI pre-prompt rather than just
+                a simple question, and the default pre-prompt is not used. Can use this with different pre-prompts
+                to do non-COI tasks.
+        """
+
+        if prompt_override:
+            prompt = query
+        else:
+            prompt = self.prompts.COI_base_prompt.format(query)
+        print("Prompt:", prompt)
+
+        while True:
+            completions = list(self.completion_client.get_completions(
+                prompt, n=fanout, temp=Director.DEFAULT_TEMP, stop=">>> "))
+            for i, completion in enumerate(completions):
+                print(f"({i}): {completion}")
+            selected_index = input()
+            if selected_index.isdigit():
+                chosen_completion = completions[int(selected_index)]
+            elif selected_index == "exit":
+                print("Exiting chain of intuition")
+                break
+            elif selected_index == "":
+                # TODO: don't modify prompt 
+                pass
+            else:
+                chosen_completion = selected_index
+
+            prompt = prompt + chosen_completion + ", \n>>> "
+            print("Next Prompt:", prompt)

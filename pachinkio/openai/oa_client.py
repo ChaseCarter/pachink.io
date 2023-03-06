@@ -5,6 +5,8 @@ from pachinkio.core.completion_client import CompletionClient
 from pachinkio.core.embedding_client import EmbeddingClient
 
 class OpenAIClient(CompletionClient, EmbeddingClient):
+    """Implementation of CompletionClient and EmbeddingClient which calls OpenAI API.
+    """
 
     organization: str
     api_key: str

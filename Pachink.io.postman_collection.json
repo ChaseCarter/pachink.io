@@ -1,0 +1,97 @@
+{
+	"info": {
+		"_postman_id": "d4850574-bab4-4b10-bcab-9a05c832c184",
+		"name": "Pachink.io",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1726022"
+	},
+	"item": [
+		{
+			"name": "Telephone Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"statement\": \"Joe gave Alice two white roses and a puppy, how odd.\",\r\n    \"iterations\": 2,\r\n    \"temperature\": 1.1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{domain}}/telephone",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"telephone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Interpolate Concepts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"startStatement\": \"I love to drink milkshakes becuase they are creamy and sugary.\",\r\n    \"targetStatement\": \"I hate eating cake because it is spongy and too sweet.\",\r\n    \"iterations\": 2,\r\n    \"fanout\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{domain}}/interpolate-concepts",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"interpolate-concepts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Compare Statements",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"statement1\": \"statement a\",\r\n    \"statement2\": \"statement b\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{domain}}/compare-statements",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"compare-statements"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": "127.0.0.1:5000"
+		}
+	]
+}

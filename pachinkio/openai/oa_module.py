@@ -7,9 +7,13 @@ from pachinkio.core.embedding_client import EmbeddingClient
 
 
 class OpenAiApiModule(Module):
+
+    def __init__(self, config_file: str) -> None:
+        self.config_file = config_file
+
     def configure(self, binder):
         config = ConfigParser()
-        config.read('.env')
+        config.read_file(open(self.config_file))
         openAiConfig = config['open-ai']
         org_id = openAiConfig['organization-id']
         api_key = openAiConfig['api-key']
